@@ -1,0 +1,7 @@
+# Activate with SPRING_PROFILES_ACTIVE=dev,mysql — overrides the dev Postgres datasource.
+# Flyway resolves {vendor} to "mysql" from the connected database, so db/migration/mysql is used.
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/medislot
+    username: medislot
+    password: medislot

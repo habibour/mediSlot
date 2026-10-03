@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: medislot-postgres
+    environment:
+      POSTGRES_DB: medislot
+      POSTGRES_USER: medislot
+      POSTGRES_PASSWORD: medislot
+    ports:
+      - "5432:5432"
+    volumes:
+      - medislot-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medislot -d medislot"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.3
+    container_name: medislot-es
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - medislot-es:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  medislot-pg:
+  medislot-es:

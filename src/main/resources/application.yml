@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: medislot
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URI:http://localhost:9200}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    locations: classpath:db/migration/{vendor}
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${SERVER_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-seconds: 3600
+  encryption:
+    key: ${FIELD_ENCRYPTION_KEY}
+  clinic:
+    zone: Asia/Dhaka
+  search:
+    enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

@@ -1,0 +1,21 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: medislot-mysql
+    environment:
+      MYSQL_DATABASE: medislot
+      MYSQL_USER: medislot
+      MYSQL_PASSWORD: medislot
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - medislot-mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  medislot-mysql:

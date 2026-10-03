@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/medislot
+    username: medislot
+    password: medislot
+
+app:
+  jwt:
+    # dev-only secret (>= 32 bytes); production must set JWT_SECRET
+    secret: ${JWT_SECRET:dev-only-secret-change-me-dev-only-secret-change-me}
+  encryption:
+    # dev-only AES-256 key (Base64); production must set FIELD_ENCRYPTION_KEY
+    key: ${FIELD_ENCRYPTION_KEY:ZGV2LW9ubHktMzItYnl0ZS1rZXktZm9yLWFlcy0yNTY=}
