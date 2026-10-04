@@ -1,0 +1,55 @@
+# Whole stack: app + PostgreSQL + Elasticsearch.
+#   ./scripts/gen-env.sh && docker compose up --build
+# Only the app is published to the host; the database and Elasticsearch stay on the internal network.
+name: medislot
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: medislot
+      POSTGRES_USER: medislot
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?run ./scripts/gen-env.sh to create .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medislot -d medislot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.3
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/medislot
+      SPRING_DATASOURCE_USERNAME: medislot
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:?run ./scripts/gen-env.sh to create .env}
+      ELASTICSEARCH_URI: http://elasticsearch:9200
+      JWT_SECRET: ${JWT_SECRET:?run ./scripts/gen-env.sh to create .env}
+      FIELD_ENCRYPTION_KEY: ${FIELD_ENCRYPTION_KEY:?run ./scripts/gen-env.sh to create .env}
+    ports:
+      - "${APP_PORT:-8081}:8081"
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  esdata:

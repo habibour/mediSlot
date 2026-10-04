@@ -1,0 +1,10 @@
+.git
+.github
+.idea
+target
+docs
+postman
+scripts
+*.md
+.env
+docker-compose*.yml
