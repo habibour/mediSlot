@@ -6,6 +6,12 @@ Secure appointment-booking and records REST API for a clinic. **Java 21 · Sprin
 
 It is a portfolio project that puts the pieces of a health-tech backend in one codebase: role-based access to sensitive data, bookings that cannot double-book under concurrency, an audit trail of who read what, and fuzzy search.
 
+## Demo
+
+![MediSlot demo: stack status, security and booking rules, search, audit trail, a 20-way booking race and the Postman run](docs/demo/mediSlot-demo.gif)
+
+[Watch as MP4](docs/demo/mediSlot-demo.mp4) (about 30 seconds). This is a replay of real command output captured from the running Docker stack, not a live screen recording: the stack status, the narrated end-to-end flow, a race of 20 simultaneous bookings (exactly one wins) and the Postman run. Reproduce every scene yourself with `./scripts/demo.sh` and `./scripts/race-demo.sh` once the stack is up (see Quick start).
+
 ## Features
 
 - **Roles and security.** Patient / doctor / admin with stateless JWT, BCrypt, URL-level and `@PreAuthorize` checks, and object-level ownership rules (a patient sees only their records; a doctor only patients they have an appointment with). Errors are RFC 7807 `ProblemDetail`.
@@ -41,6 +47,7 @@ docker compose up --build            # API + PostgreSQL + Elasticsearch
 curl localhost:8081/actuator/health  # {"status":"UP",...}
 ```
 
+- Watch it work: `./scripts/demo.sh` walks through registration, security checks, booking rules, search and the audit trail; `./scripts/race-demo.sh` fires 20 simultaneous bookings at one slot (expect one `201` and nineteen `409`).
 - API: `http://localhost:8081` · Swagger UI: `http://localhost:8081/swagger-ui.html` (use *Authorize* with a token from `POST /api/auth/login`).
 - Dev login (seeded by a migration, **change before any real deployment**): `admin@medislot.local` / `Admin@12345`.
 - Only the API port is published; PostgreSQL and Elasticsearch stay on the internal Docker network.
