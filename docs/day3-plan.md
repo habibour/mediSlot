@@ -70,3 +70,6 @@
 
 ## If you fall behind
 Cut order: Stretch items → Caddy/HTTPS (deploy plain HTTP) → `@DataJpaTest` extras → demo video (keep GIF). Never cut: coverage gate, CI green, Docker compose, README + AI-tools section.
+
+## Status
+Blocks 1–8 done except the live AWS deployment (runbook only) and an observed green run on GitHub Actions (pending the push). See the implementation notes in `day3-spec.md`.

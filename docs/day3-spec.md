@@ -59,3 +59,11 @@ Sections: one-paragraph pitch, feature list, architecture diagram, tech stack, *
 - [ ] Demo URL live and listed in README (and in the job application/CV)
 - [ ] 2-minute screen-recording/GIF of the demo flow linked in README
 - [ ] Interview cheat sheet (`docs/notes.md`) has answers for the PRD §9 patterns and the Day 1/2 talking points
+
+## Implementation notes (what changed versus the first draft)
+- **Deployment is a runbook, not a live URL.** No AWS account/credentials were available, so D3-AC11 is met by `docs/deploy-aws.md` (not executed on AWS) plus a clean-volume local run of the same compose stack. The README states the app is not hosted.
+- **ER diagram (D3-AC10):** DBeaver was not used. `docs/er-diagram.md` is a Mermaid diagram written from the Flyway migrations (renders on GitHub) and says so.
+- **Coverage gate (D3-AC2):** the JaCoCo gate merges unit (surefire) and integration (failsafe) data and enforces 90% line coverage over the whole bundle (excluding the application class and the seed runner); measured 94.8%. Verified to fail at 99% and pass at 90%.
+- **Secrets (D3-AC6):** `scripts/gen-env.sh` generates `.env` (mode 600, git-ignored); compose fails fast if a secret is missing. No dev defaults exist on the container path.
+- **Postman (D3-AC8):** 40 requests / 56 assertions, run with `newman`; idempotent across runs and verified to fail (29 assertions, exit 1) when deliberately broken.
+- **CI (D3-AC7):** three jobs (PostgreSQL suite + coverage gate, MySQL suite, Docker stack + Postman). The workflow file is validated and each step was run locally, but the first run on GitHub is the real test.
